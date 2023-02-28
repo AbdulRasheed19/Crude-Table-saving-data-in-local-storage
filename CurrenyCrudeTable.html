@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Crud Table</title>
+    <style>
+        .container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .container .table {
+            border: 1px solid black;
+        }
+
+        .container .table .row {
+            border: 1px solid black;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        
+        }
+
+        .container .table .row div {
+            border: 1px solid black;
+            width: 25%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+        #row {
+    display: none;
+}
+
+        /* .container .table .row .header{
+            border: none;
+            padding: 5px;
+            justify-content: space-around;
+        }*/
+        .container .table .row div input {
+            width: 10rem;
+        }
+    </style>
+</head>
+
+<body>
+    
+    <div class="container">
+        <div>Currency</div>
+        <div class="table" id="table">
+            <div class="row">
+                <div class="header" >Name of Currency</div>
+                <div class="header" >Per Dollar</div>
+                <div class="header" >No:of Dollar</div>
+                <div class="header" >Total</div>
+                <div class="header">
+                    <button onclick="addRow()" id="addButton">
+                        Add
+                    </button>
+                </div>
+            </div>
+            <div class="row" id="row" >
+                <div><input type="text" id="currency"/></div>
+                <div><input type="text" id="perDollar" class="perDollar" oninput="calculateTotal()"/></div>
+                <div><input type="text" id="nod" class="nod" oninput="calculateTotal()"/></div>
+                <div id="total"><input type="text" class="total" /></div>
+                <div>
+                    <button onclick="deleteRow(event)" id="deleteButton">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+        <br>
+       <div>
+        <button id="SaveBtn">
+            save
+        </button> 
+        </div> 
+    </div>
+
+
+   
+    <script>
+        
+        function addRow() {
+        // Get the table element
+        var table = document.getElementById("table");
+
+        // Clone the existing row
+        var newRow = document.getElementById("row").cloneNode(true);
+        newRow.style.display = "flex";
+
+        // Append the new row to the table
+        table.appendChild(newRow);
+}
+
+        function deleteRow(event) {
+        // Get the target row element
+        var row = event.target.parentNode.parentNode;
+
+        // Get the table element
+        var table = document.getElementById("table");
+
+        // Remove the target row
+        table.removeChild(row);
+        }
+
+
+        function calculateTotal() {
+         // Get all the perDollar and nod input elements
+            var perDollarInputs = document.querySelectorAll(".perDollar");
+            var nodInputs = document.querySelectorAll(".nod");
+
+        // Loop through all the perDollar and nod input elements
+            for (var i = 0; i < perDollarInputs.length; i++) {
+        // Get the perDollar and nod values for the current row
+            var perDollar = perDollarInputs[i].value;
+            var nod = nodInputs[i].value;
+
+        // Calculate the total
+            var total = perDollar * nod;
+
+        // Get the total input element for the current row
+            var totalInput = document.querySelectorAll(".total")[i];
+
+        // Update the total input value for the current row
+            totalInput.value = total;
+            }
+        }
+
+        document.getElementById("SaveBtn").addEventListener("click", function() {
+         // Get all the currency, perDollar, nod, and total input elements
+        var currencyInputs = document.querySelectorAll("#currency");
+        var perDollarInputs = document.querySelectorAll("#perDollar");
+        var nodInputs = document.querySelectorAll("#nod");
+        var totalInputs = document.querySelectorAll("#total input");
+
+        // Create an empty array to store the table data
+        var tableData = [];
+
+        // Loop through all the currency, perDollar, nod, and total input elements
+        for (var i = 0; i < currencyInputs.length; i++) {
+        // Get the currency, perDollar, nod, and total values for the current row
+        var currency = currencyInputs[i].value;
+        var perDollar = perDollarInputs[i].value;
+        var nod = nodInputs[i].value;
+        var total = totalInputs[i].value;
+
+        // Add the row data to the tableData array
+        tableData.push({ currency: currency, perDollar: perDollar, nod: nod, total: total });
+        }
+
+        // Save the table data to local storage
+        localStorage.setItem("tableData", JSON.stringify(tableData));
+        });
+
+        window.addEventListener("load", function() {
+        // Retrieve the table data from local storage
+        var tableData = JSON.parse(localStorage.getItem("tableData"));
+
+        // Check if there is any saved data
+        if (tableData) {
+        // Get the table element
+        var table = document.getElementById("table");
+        // Loop through all the saved data
+        for (var i = 0; i < tableData.length; i++) {
+        // Clone the existing row
+        var newRow = document.getElementById("row").cloneNode(true);
+        newRow.style.display = "flex";
+
+        // Update the currency, perDollar, nod, and total values for the current row
+        newRow.querySelector("#currency").value = tableData[i].currency;
+        newRow.querySelector("#perDollar").value = tableData[i].perDollar;
+        newRow.querySelector("#nod").value = tableData[i].nod;
+        newRow.querySelector("#total input").value = tableData[i].total;
+
+        // Append the new row to the table
+        table.appendChild(newRow);
+        }
+        }
+        });
+
+
+
+
+
+    </script>
+</body>
+
+</html>
